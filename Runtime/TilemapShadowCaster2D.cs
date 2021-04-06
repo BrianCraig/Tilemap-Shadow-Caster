@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace TilemapShadowCaster.Runtime
 {
@@ -10,7 +11,8 @@ namespace TilemapShadowCaster.Runtime
     {
         [SerializeField] private uint colliderHash;
         [SerializeField] private bool m_SelfShadows = false;
-        [SerializeField] private int[] m_ApplyToSortingLayers = null;
+        [SerializeField] private int m_ApplyToSortingLayers = 0;
+        private int[] values;
             
         private void Update()
         {
@@ -19,6 +21,26 @@ namespace TilemapShadowCaster.Runtime
             if (shapeHash == colliderHash) return;
             colliderHash = shapeHash;
             ReinitializeShapes(collider);
+        }
+
+        private void Awake(){
+            values = SortingLayer.layers.Select(l => l.id).ToArray();
+        }
+
+        private int[] getLayers(){
+            List<int> sortingLayers = new List<int>();
+            int propCount = 0;
+            for (int i = 0; i < values.Length; i++)
+            {
+                int layer = 1 << i;
+                if ((m_ApplyToSortingLayers & layer) != 0)
+                {
+                    sortingLayers.Add(values[propCount]);
+                    propCount ++;
+                }
+            }
+            int[] layerArray = sortingLayers.ToArray();
+            return layerArray;
         }
 
         private void ReinitializeShapes(CompositeCollider2D collider)
@@ -35,7 +57,7 @@ namespace TilemapShadowCaster.Runtime
                 PathShadow path = go.AddComponent<PathShadow>();
                 path.useRendererSilhouette = false;
                 path.selfShadows = m_SelfShadows;
-                path.SetShape(points, m_ApplyToSortingLayers);
+                path.SetShape(points, getLayers());
             }
         }
 
