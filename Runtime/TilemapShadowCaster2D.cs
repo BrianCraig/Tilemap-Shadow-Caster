@@ -10,7 +10,8 @@ namespace TilemapShadowCaster.Runtime
     {
         [SerializeField] private uint colliderHash;
         [SerializeField] private bool m_SelfShadows = false;
-        
+        [SerializeField] private int[] m_ApplyToSortingLayers = null;
+            
         private void Update()
         {
             CompositeCollider2D collider = GetComponent<CompositeCollider2D>();
@@ -34,7 +35,7 @@ namespace TilemapShadowCaster.Runtime
                 PathShadow path = go.AddComponent<PathShadow>();
                 path.useRendererSilhouette = false;
                 path.selfShadows = m_SelfShadows;
-                path.SetShape(points);
+                path.SetShape(points, m_ApplyToSortingLayers);
             }
         }
 
@@ -63,6 +64,15 @@ namespace TilemapShadowCaster.Runtime
         public void OnDestroy()
         {
             RemoveCurrentShadows();
+        }
+    }
+
+     public class BitMaskAttribute : PropertyAttribute
+    {
+        public System.Type propType;
+        public BitMaskAttribute(System.Type aType)
+        {
+            propType = aType;
         }
     }
 }
