@@ -11,8 +11,7 @@ namespace TilemapShadowCaster.Runtime
     {
         [SerializeField] private uint colliderHash;
         [SerializeField] private bool m_SelfShadows = false;
-        [SerializeField] private int m_ApplyToSortingLayers = 0;
-        private int[] values;
+        [SerializeField] private int m_ApplyToSortingLayers = -1;
             
         private void Update()
         {
@@ -23,11 +22,8 @@ namespace TilemapShadowCaster.Runtime
             ReinitializeShapes(collider);
         }
 
-        private void Awake(){
-            values = SortingLayer.layers.Select(l => l.id).ToArray();
-        }
-
         private int[] getLayers(){
+            int[] values = SortingLayer.layers.Select(l => l.id).ToArray();
             List<int> sortingLayers = new List<int>();
             int propCount = 0;
             for (int i = 0; i < values.Length; i++)
@@ -86,6 +82,15 @@ namespace TilemapShadowCaster.Runtime
         public void OnDestroy()
         {
             RemoveCurrentShadows();
+        }
+    }
+
+     public class BitMaskAttribute : PropertyAttribute
+    {
+        public System.Type propType;
+        public BitMaskAttribute(System.Type aType)
+        {
+            propType = aType;
         }
     }
 }
