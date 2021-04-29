@@ -11,17 +11,14 @@ namespace TilemapShadowCaster.Editor
     {
         private SerializedProperty m_selfShadowsProperty;
         private SerializedProperty m_ApplyToSortingLayersProperty;
-        private static int flags;
 
         static string[] options;
-        static int[] values;
 
         void OnEnable()
         {
             m_selfShadowsProperty = serializedObject.FindProperty("m_SelfShadows");
             m_ApplyToSortingLayersProperty = serializedObject.FindProperty("m_ApplyToSortingLayers");
             options = SortingLayer.layers.Select(l => l.name).ToArray();
-            values = SortingLayer.layers.Select(l => l.id).ToArray();
         }
 
         public override void OnInspectorGUI()
